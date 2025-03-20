@@ -184,13 +184,14 @@ header {
     text-align: center;
     font-size: 16px;
     margin-top: 20px;
-    transition: background 0.3s ease-in-out;
+    transition: 150ms linear;
 
 }
 
 #cda:hover {
     background: #32c232;
-    transform: translateX(+1%);
+    transform: translateX(+2%);
+    transform: scale(1.03);
     transition: 150ms linear;
 }
 
@@ -280,7 +281,8 @@ ul li:hover {
     background-color: #aed5f1;
     border-radius: 10px;
     opacity: 100%;
-    transform: translateX(+1%);
+    transform: translateX(+2%);
+    transform: scale(1.03);
     transition: 150ms linear;
 }
 
@@ -294,6 +296,4 @@ ul li a:hover {
 .highlight:hover {
     background: #0057b3;
     border-radius: 5px;
-    padding: 5px 5px 5px 5px;
-
 }
