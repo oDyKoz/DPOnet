@@ -26,6 +26,3 @@ Este projeto visa recriar o sistema da DPO Net, implementando um novo sistema de
   Chat Bot com IA
 
 </div>
-
-## Estrutura do Projeto
-
