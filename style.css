@@ -79,6 +79,18 @@ header {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: 150ms linear;
+}
+
+.header-main button:hover {
+    padding: 10px 15px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transform: translateY(-5%) scale(1.1);
+    transition: 150ms linear;
 }
 
 
@@ -188,8 +200,7 @@ header {
 
 #cda:hover {
     background: #289e28;
-    transform: translateX(+2%);
-    transform: scale(1.03);
+    transform: translateY(-5%) scale(1.05);
     transition: 150ms linear;
 }
 
@@ -212,6 +223,7 @@ header {
 }
 
 .chat:hover {
+    background-color: #0069d8;
     position: fixed;
     transform: translateY(-10%) scale(1.1);
     transition: 150ms linear;
@@ -286,7 +298,7 @@ ul li:hover {
     background-color: #aed5f1;
     border-radius: 10px;
     opacity: 100%;
-    transform: translateX(+1%) scale(1.03);
+    transform: translateX(+3%) scale(1.05);
     transition: 150ms linear;
 }
 
