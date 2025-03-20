@@ -102,7 +102,7 @@ header {
 
 .tag {
     display: inline-block;
-    
+
     background: #4CAF50;
     color: white;
     padding: 5px 10px;
@@ -160,7 +160,7 @@ header {
 }
 
 .help-card button:active:before {
-    background: #3a0ca3;
+    background: #003c7c;
     transition: background 0s;
 }
 
@@ -185,8 +185,9 @@ header {
     font-size: 16px;
     margin-top: 20px;
     transition: background 0.3s ease-in-out;
-    
+
 }
+
 #cda:hover {
     background: #32c232;
     transform: translateX(+1%);
@@ -294,6 +295,5 @@ ul li a:hover {
     background: #0057b3;
     border-radius: 5px;
     padding: 5px 5px 5px 5px;
-    
-}
 
+}
