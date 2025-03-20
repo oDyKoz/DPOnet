@@ -27,10 +27,5 @@ Este projeto visa recriar o sistema da DPO Net, implementando um novo sistema de
 
 </div>
 
-- **HTML**: Estruturação da página.
-- **CSS**: Estilização e design responsivo.
-- **JavaScript**: Interatividade e funcionalidades avançadas.
-- **Integração com sistema existente**: A página será integrada ao sistema da DPO Net para garantir uma comunicação eficiente entre os módulos.
-
 ## Estrutura do Projeto
 
