@@ -102,6 +102,7 @@ header {
 
 .tag {
     display: inline-block;
+    
     background: #4CAF50;
     color: white;
     padding: 5px 10px;
