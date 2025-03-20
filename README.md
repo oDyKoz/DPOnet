@@ -11,6 +11,22 @@ Este projeto visa recriar o sistema da DPO Net, implementando um novo sistema de
 
 ## Tecnologias Utilizadas
 
+<div align="center" style="display: inline_block"><br>
+  
+  <img align="center" alt="HTML" height="30" width="40" src="https://raw.githubusercontent.com/devicons/devicon/master/icons/html5/html5-original.svg">
+   Estruturação da página.
+   
+  <img align="center" alt="Js" height="30" width="40" src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-plain.svg">
+  Interatividade e funcionalidades avançadas.
+  
+  <img align="center" alt="CSS" height="30" width="40" src="https://raw.githubusercontent.com/devicons/devicon/master/icons/css3/css3-original.svg">
+  Estilização e design responsivo.
+
+  <img align="center" alt="Python" height="30" width="40" src="https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg">
+  Chat Bot com IA
+
+</div>
+
 - **HTML**: Estruturação da página.
 - **CSS**: Estilização e design responsivo.
 - **JavaScript**: Interatividade e funcionalidades avançadas.
