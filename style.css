@@ -34,6 +34,10 @@ header {
     padding: 50px 25px 30px 30px;
 }
 
+header a{
+    color: white;
+}
+
 #logoHeader {
     padding-bottom: 20px;
     width: 13vw;
@@ -49,7 +53,7 @@ header {
     background-color: #ffffff;
     border-radius: 30px;
     flex-grow: 1;
-    padding: 20px 20px 20px 20px;
+    padding: 10px 10px 10px 10px;
     margin-bottom: 100px;
 }
 
@@ -106,10 +110,13 @@ header {
 /* cards com as infos  */
 
 .help-card {
+    display: flex;
+    flex-direction: column;
     flex-grow: 1;
     flex-basis: 200;
     background: white;
     padding: 15px;
+    justify-content: space-between;
     border-radius: 10px;
     box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.1);
     width: 30%;
@@ -117,7 +124,6 @@ header {
 
 .tag {
     display: inline-block;
-
     background: #4CAF50;
     color: white;
     padding: 5px 10px;
@@ -310,6 +316,8 @@ ul li a:hover {
 }
 
 .highlight {
+    font-size: small;
+    gap: 10px;
     margin-bottom: 0;
     padding-bottom: 0 0 0 0;
 }
