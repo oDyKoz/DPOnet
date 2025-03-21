@@ -34,12 +34,62 @@ header {
     padding: 50px 25px 30px 30px;
 }
 
-header a{
+.user-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.7rem;
+    display: flex;
+    gap: 15px;
+}
+
+.user-info p {
     color: white;
+    font-size: small;
+}
+
+.user-info img {
+    background-color: transparent;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+.user-info a {
+    color: white;
+    cursor: pointer;
+    transition: 150ms linear;
+}
+
+.user-info a :hover {
+    transform: translateY(-5%) scale(1.1);
+    transition: 150ms linear;
+}
+
+.filter {
+    padding: 10px 15px;
+    background: white;
+    color: #007bff;
+    border-style: solid;
+    border: #007bff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 150ms linear;
+}
+
+.filter :hover {
+    padding: 10px 15px;
+    background: #007bff;
+    color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transform: translateY(-5%) scale(1.1);
+    transition: 150ms linear;
 }
 
 #logoHeader {
-    padding-bottom: 20px;
+    padding-bottom: 15px;
     width: 13vw;
     height: auto;
 }
@@ -78,12 +128,15 @@ header a{
 }
 
 .header-main button {
+    display: flex;
     padding: 10px 15px;
     background: #0057b3;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    font-size: small;
+    gap: 10px;
     transition: 150ms linear;
 }
 
@@ -91,10 +144,7 @@ header a{
     padding: 10px 15px;
     background: #007bff;
     color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transform: translateY(-5%) scale(1.1);
+    transform: translateY(-5%) scale(1.05);
     transition: 150ms linear;
 }
 
@@ -319,7 +369,7 @@ ul li a:hover {
     font-size: small;
     gap: 10px;
     margin-bottom: 0;
-    padding-bottom: 0 0 0 0;
+    padding: 0 0 0 2px;
 }
 
 .highlight:hover {
