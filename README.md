@@ -14,13 +14,13 @@ Este projeto visa recriar o sistema da DPO Net, implementando um novo sistema de
 <div align="center" flex-direction="column"><br>
   
   <img align="center" alt="HTML" height="30" width="40" src="https://raw.githubusercontent.com/devicons/devicon/master/icons/html5/html5-original.svg">
-   Estruturação da página.
+   Estruturação da página.<br>
    
   <img align="center" alt="Js" height="30" width="40" src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-plain.svg">
-  Interatividade e funcionalidades avançadas.
+  Interatividade e funcionalidades avançadas.<br>
   
   <img align="center" alt="CSS" height="30" width="40" src="https://raw.githubusercontent.com/devicons/devicon/master/icons/css3/css3-original.svg">
-  Estilização e design responsivo.
+  Estilização e design responsivo.<br>
 
   <img align="center" alt="Python" height="30" width="40" src="https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg">
   Chat Bot com IA
