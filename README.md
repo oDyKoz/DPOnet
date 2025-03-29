@@ -11,7 +11,7 @@ Este projeto visa recriar o sistema da DPO Net, implementando um novo sistema de
 
 ## Tecnologias Utilizadas
 
-<div align="center" flex-direction="column"><br>
+<div flex-direction="column"><br>
   
   <img align="center" alt="HTML" height="30" width="40" src="https://raw.githubusercontent.com/devicons/devicon/master/icons/html5/html5-original.svg">
    Estruturação da página.<br>
