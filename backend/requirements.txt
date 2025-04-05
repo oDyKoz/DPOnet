@@ -13,5 +13,5 @@ requests
 werkzeug
 
 # Gerenciamento de Ambiente
-pip
+pip>=25.0.1
 setuptools
