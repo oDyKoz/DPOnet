@@ -1,120 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Central de Ajuda</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel='stylesheet'
-        href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css'>
-    <script defer src=" app.js"></script>
-</head>
-
-<body>
-
-    <header>
-        <a href="#">
-            <img src="./assets/Logo DPOnet Clara.png" alt="" id="logoHeader">
-        </a>
-
-        <div class="user-info">
-            <a class="notifications" href="#"><i class="fi fi-rs-bell"></i></a>
-            <a href="#"> <img src="./assets/usuario-do-circulo.png" alt=""></a>
-            <p>######## <br>##########</p>
-        </div>
-    </header>
-
-    <div class="container">
-
-        <!-- barra de opções lateral -->
-
-        <div class="sidebar">
-            <ul>
-
-                <li class="highlight"><i class="fi fi-rs-clipboard"></i>Relatórios</li>
-                <li class="highlight"><i class="fi fi-rs-shield"></i>Canal de Comunicação</li>
-                <li class="highlight"><i class="fi fi-rs-box-open"></i>Fornecedores</li>
-                <li class="highlight"><i class="fi fi-rs-social-network"></i>Consentimentos</li>
-                <li class="highlight"><i class="fi fi-rs-suitcase-alt"></i>Empresa</li>
-                <li class="highlight"><i class="fi fi-rs-box"></i>Documentos</li>
-                <li class="highlight"><i class="fi fi-rs-cookie-alt"></i>Cookies</li>
-                <li class="highlight"><i class="fi fi-rs-user-lock"></i>Central da Privacidade</li>
-            </ul>
-
-            <!-- botão que abre a página de acompanhamento -->
-
-            <button id="cda">Central De Acompanhamento</button>
-
-        </div>
-
-        <!-- bloco principal com opções rápidas -->
-
-        <div class="main-content">
-
-            <div class="header-main">
-                <h1>Central de Acompanhamento</h1>
-                <input type="text" placeholder="Buscar...">
-                <button><i class="fi fi-rs-interrogation"></i>Tutorial</button>
-                <button class="filter"><i class="fi fi-rs-filter"></i>Filtros</button>
-            </div class="header-main">
-
-            <section class="help-section">
-
-                <div class="help-card">
-                    <span class="tag">Acompanhamento</span>
-                    <h3>Status do Processo</h3>
-                    <p>Veja o andamento do seu serviço.</p>
-                    <button>Visualizar Status</button>
-                </div>
-
-                <div class="help-card">
-                    <span class="tag">Acompanhamento</span>
-                    <h3>Downloads de Documentos</h3>
-                    <p>Acesse contratos e relatórios.</p>
-                    <button>Baixar Documentos</button>
-                </div>
-
-                <div class="help-card">
-                    <span class="tag">Acompanhamento</span>
-                    <h3>Histórico de Atendimento</h3>
-                    <p>Consulte interações anteriores.</p>
-                    <button>Ver Histórico</button>
-                </div>
-
-                <div class="help-card">
-                    <span class="tag">Acompanhamento</span>
-                    <h3>Checklist de Conformidade</h3>
-                    <p>Veja os próximos passos e obrigações.</p>
-                    <button>Acessar Checklist</button>
-                </div>
-
-                <div class="help-card">
-                    <span class="tag">Acompanhamento</span>
-                    <h3>Solicitação de Suporte</h3>
-                    <p>Abra um chamado rapidamente.</p>
-                    <button>Abrir Chamado</button>
-                </div>
-
-                <div class="help-card">
-                    <span class="tag">Acompanhamento</span>
-                    <h3>Gerenciamento de Incidentes</h3>
-                    <p>Gerencie incidentes de segurança relacionados a dados pessoais.</p>
-                    <button>Gerenciar</button>
-                </div>
-
-            </section>
-
-        </div>
-
-        <!-- botão do chat bot -->
-        <button class="chat" onclick="toggleMenu()">☰</button>
-        <div class="menu" id="menu">
-            <a href="#">Opção 1</a>
-            <a href="#">Opção 2</a>
-            <a href="#">Opção 3</a>
-        </div>
-    </div>
-</body>
-
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DPOnet</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css'>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
