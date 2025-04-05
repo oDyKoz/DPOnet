@@ -1,17 +1,17 @@
 # API e Modelo de IA
-google-generativeai>=1.0.0
+google-generativeai
 
 # Framework Web
-Flask>=2.0.0
-flask-cors>=4.0.0
+Flask
+flask-cors
 
 # Variáveis de Ambiente
-python-dotenv>=1.0.0
+python-dotenv
 
 # Utilitários
-requests>=2.31.0
-werkzeug>=2.0.0
+requests
+werkzeug
 
 # Gerenciamento de Ambiente
-pip>=23.0.0
-setuptools>=68.0.0
+pip
+setuptools
