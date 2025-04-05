@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central de Ajuda</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css'>
+</head>
+<body>
+    <header>
+        <a href="#">
+            <img src="frontend/public/assets/Logo DPOnet Clara.png" alt="" id="logoHeader">
+        </a>
+
+        <div class="user-info">
+            <a class="notifications" href="#"><i class="fi fi-rs-bell"></i></a>
+            <a href="#"> <img src="frontend/public/assets/usuario-do-circulo.png" alt=""></a>
+            <p>######## <br>##########</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="sidebar">
+            <ul>
+                <li class="highlight"><i class="fi fi-rs-clipboard"></i>Relatórios</li>
+                <li class="highlight"><i class="fi fi-rs-shield"></i>Canal de Comunicação</li>
+                <li class="highlight"><i class="fi fi-rs-box-open"></i>Fornecedores</li>
+                <li class="highlight"><i class="fi fi-rs-social-network"></i>Consentimentos</li>
+                <li class="highlight"><i class="fi fi-rs-suitcase-alt"></i>Empresa</li>
+                <li class="highlight"><i class="fi fi-rs-box"></i>Documentos</li>
+                <li class="highlight"><i class="fi fi-rs-cookie-alt"></i>Cookies</li>
+                <li class="highlight"><i class="fi fi-rs-user-lock"></i>Central da Privacidade</li>
+            </ul>
+            <button id="cda">Central De Acompanhamento</button>
+        </div>
+
+        <div class="main-content">
+            <div class="header-main">
+                <h1>Central de Acompanhamento</h1>
+                <input type="text" placeholder="Buscar...">
+                <button><i class="fi fi-rs-interrogation"></i>Tutorial</button>
+                <button class="filter"><i class="fi fi-rs-filter"></i>Filtros</button>
+            </div>
+
+            <section class="help-section">
+                <div class="help-card">
+                    <span class="tag">Acompanhamento</span>
+                    <h3>Status do Processo</h3>
+                    <p>Veja o andamento do seu serviço.</p>
+                    <button>Visualizar Status</button>
+                </div>
+                <div class="help-card">
+                    <span class="tag">Acompanhamento</span>
+                    <h3>Downloads de Documentos</h3>
+                    <p>Acesse contratos e relatórios.</p>
+                    <button>Baixar Documentos</button>
+                </div>
+                <div class="help-card">
+                    <span class="tag">Acompanhamento</span>
+                    <h3>Histórico de Atendimento</h3>
+                    <p>Consulte interações anteriores.</p>
+                    <button>Ver Histórico</button>
+                </div>
+                <div class="help-card">
+                    <span class="tag">Acompanhamento</span>
+                    <h3>Checklist de Conformidade</h3>
+                    <p>Veja os próximos passos e obrigações.</p>
+                    <button>Acessar Checklist</button>
+                </div>
+                <div class="help-card">
+                    <span class="tag">Acompanhamento</span>
+                    <h3>Solicitação de Suporte</h3>
+                    <p>Abra um chamado rapidamente.</p>
+                    <button>Abrir Chamado</button>
+                </div>
+                <div class="help-card">
+                    <span class="tag">Acompanhamento</span>
+                    <h3>Gerenciamento de Incidentes</h3>
+                    <p>Gerencie incidentes de segurança relacionados a dados pessoais.</p>
+                    <button>Gerenciar</button>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Div onde o chatbot será renderizado -->
+    <div id="chatbot-root"></div>
+
+    <!-- Scripts React para o chatbot -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+
+    <!-- Script do Chatbot -->
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function Chatbot() {
+            const [isOpen, setIsOpen] = useState(false);
+            const [messages, setMessages] = useState([]);
+            const [inputMessage, setInputMessage] = useState('');
+            const [error, setError] = useState(null);
+            const [apiKey, setApiKey] = useState(null);
+
+            useEffect(() => {
+                console.log('Iniciando carregamento da configuração...');
+                fetch('http://localhost:5000/api/config')
+                    .then(response => {
+                        console.log('Resposta recebida:', response.status);
+                        if (!response.ok) {
+                            throw new Error(`Erro ao carregar configuração: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Dados recebidos:', data);
+                        if (data.status === 'success' && data.apiKey) {
+                            setApiKey(data.apiKey);
+                            setError(null);
+                            console.log('Chave da API carregada com sucesso');
+                        } else {
+                            throw new Error(data.message || 'Chave da API não encontrada na resposta');
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Erro ao carregar configuração:', err);
+                        setError('Erro ao carregar configuração do chatbot: ' + err.message);
+                    });
+            }, []);
+
+            const toggleChat = () => {
+                setIsOpen(!isOpen);
+            };
+
+            const sendMessage = async (e) => {
+                e.preventDefault();
+                if (!inputMessage.trim()) {
+                    return;
+                }
+
+                const userMessage = inputMessage;
+                setInputMessage('');
+                setMessages(prev => [...prev, { text: userMessage, sender: 'user' }]);
+
+                try {
+                    const response = await fetch('http://localhost:5000/send_message', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            message: userMessage
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Erro na API: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    
+                    if (!data.response) {
+                        throw new Error('Resposta inválida da API');
+                    }
+
+                    const botResponse = data.response;
+                    setMessages(prev => [...prev, { text: botResponse, sender: 'bot' }]);
+                } catch (error) {
+                    console.error('Erro ao enviar mensagem:', error);
+                    setMessages(prev => [...prev, { 
+                        text: 'Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, tente novamente.', 
+                        sender: 'bot'
+                    }]);
+                }
+            };
+
+            return (
+                <div className="chatbot-container">
+                    <button className="chatbot-toggle" onClick={toggleChat}>
+                        {isOpen ? '✕' : '💬'}
+                    </button>
+
+                    {isOpen && (
+                        <div className="chatbot-popup">
+                            <div className="chatbot-header">
+                                <h3>Assistente Virtual</h3>
+                                <button onClick={toggleChat} className="close-button">✕</button>
+                            </div>
+                            
+                            {error && (
+                                <div className="chatbot-error">
+                                    {error}
+                                </div>
+                            )}
+                            
+                            <div className="chatbot-messages">
+                                {messages.map((message, index) => (
+                                    <div 
+                                        key={index} 
+                                        className={`message ${message.sender === 'user' ? 'user-message' : 'bot-message'}`}
+                                    >
+                                        {message.text}
+                                    </div>
+                                ))}
+                            </div>
+
+                            <form onSubmit={sendMessage} className="chatbot-input">
+                                <input
+                                    type="text"
+                                    value={inputMessage}
+                                    onChange={(e) => setInputMessage(e.target.value)}
+                                    placeholder="Digite sua mensagem..."
+                                    disabled={!apiKey}
+                                />
+                                <button type="submit" disabled={!apiKey}>➤</button>
+                            </form>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('chatbot-root'));
+        root.render(<Chatbot />);
+    </script>
+</body>
+</html>
