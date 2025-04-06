@@ -1,7 +1,6 @@
-google-generativeai==0.4.1
+google-generativeai
 Flask
 flask-cors
 python-dotenv
 requests
 Werkzeug
-gunicorn
