@@ -167,7 +167,7 @@
                     const botResponse = data.response;
                     setMessages(prev => [...prev, { text: botResponse, sender: 'bot' }]);
                 } catch (error) {
-                    console.error('Erro ao enviar mensagem:', error);
+                    console.error('Erro ao enviar mensagem 123:', error);
                     setMessages(prev => [...prev, { 
                         text: 'Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, tente novamente.', 
                         sender: 'bot'
