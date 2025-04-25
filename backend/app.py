@@ -5,24 +5,32 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from functools import wraps
 import time
+import logging
+
+# Configuração de logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Carregar variáveis de ambiente
 load_dotenv()
 api_key = os.getenv("GOOGLE_API_KEY")
 
 if not api_key:
+    logger.error("API Key não encontrada no arquivo .env")
     raise ValueError("API Key não encontrada no arquivo .env")
 
 # Configuração do Gemini
 try:
     genai.configure(api_key=api_key)
     modelo = genai.GenerativeModel("gemini-1.5-flash")
+    logger.info("Modelo Gemini configurado com sucesso")
 except Exception as e:
+    logger.error(f"Erro ao configurar Gemini: {str(e)}")
     raise ValueError(f"Erro ao configurar Gemini: {str(e)}")
 
 # Configuração do Flask
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Rate limiting
 def rate_limit(limit=10, per=60):
@@ -35,6 +43,7 @@ def rate_limit(limit=10, per=60):
             if ip in requests:
                 if now - requests[ip]['time'] < per:
                     if requests[ip]['count'] >= limit:
+                        logger.warning(f"Limite de requisições excedido para IP: {ip}")
                         return jsonify({'error': 'Limite de requisições excedido'}), 429
                     requests[ip]['count'] += 1
                 else:
@@ -86,6 +95,7 @@ def obter_resposta_gemini(pergunta):
         resposta = modelo.generate_content(contexto_completo)
         return resposta.text
     except Exception as e:
+        logger.error(f"Erro ao processar pergunta com Gemini: {str(e)}")
         return f"Erro ao processar sua pergunta: {str(e)}"
 
 # Rota para comunicação com o frontend
@@ -94,22 +104,37 @@ def obter_resposta_gemini(pergunta):
 def chat():
     try:
         dados = request.get_json()
-        pergunta = dados.get("pergunta", "").strip()
+        if not dados:
+            logger.warning("Requisição sem dados JSON")
+            return jsonify({"error": "Dados não fornecidos"}), 400
 
+        pergunta = dados.get("pergunta", "").strip()
         if not pergunta:
+            logger.warning("Pergunta vazia recebida")
             return jsonify({"error": "Nenhuma pergunta fornecida"}), 400
+
+        logger.info(f"Pergunta recebida: {pergunta}")
 
         # Verificar macros primeiro
         resposta_macro = verificar_macros(pergunta)
         if resposta_macro:
+            logger.info("Resposta macro encontrada")
             return jsonify({"resposta": resposta_macro})
 
         # Se não for uma macro, usar o modelo Gemini
         resposta = obter_resposta_gemini(pergunta)
+        logger.info("Resposta Gemini gerada com sucesso")
         return jsonify({"resposta": resposta})
 
     except Exception as e:
+        logger.error(f"Erro interno do servidor: {str(e)}")
         return jsonify({"error": f"Erro interno do servidor: {str(e)}"}), 500
 
+# Rota de health check
+@app.route("/health", methods=["GET"])
+def health_check():
+    return jsonify({"status": "ok"}), 200
+
 if __name__ == "__main__":
-    app.run(debug=False, host='0.0.0.0', port=5000)
+    port = int(os.getenv("PORT", 5000))
+    app.run(debug=False, host='0.0.0.0', port=port)
