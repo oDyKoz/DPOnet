@@ -101,6 +101,43 @@ def chat():
 @app.route("/send_message", methods=["POST"])
 def send_message():
     if not modelo:
-        return jsonify({'status': 'error', 'response': 'Modelo não está inicializado corretamente'}), 500
+        return jsonify({
+            'status': 'error',
+            'response': 'Modelo não está inicializado corretamente'
+        }), 500
 
     try:
+        data = request.get_json()
+        print("Requisição recebida:", data)
+
+        if not data or "message" not in data:
+            return jsonify({
+                'status': 'error',
+                'response': 'Campo "message" ausente na requisição'
+            }), 400
+
+        user_message = data["message"].strip()
+        if not user_message:
+            return jsonify({
+                'status': 'error',
+                'response': 'Mensagem vazia'
+            }), 400
+
+        print(f"Mensagem recebida: {user_message}")
+
+        contexto_completo = f"{contexto}\nUsuário: {user_message}\nChatbot:"
+        resposta = modelo.generate_content(contexto_completo)
+        print(f"Resposta gerada com sucesso: {resposta.text[:100]}...")
+
+        return jsonify({
+            'status': 'success',
+            'response': resposta.text
+        })
+
+    except Exception as e:
+        print(f"ERRO ao processar mensagem: {str(e)}")
+        return jsonify({
+            'status': 'error',
+            'response': f'Erro interno ao processar mensagem: {str(e)}'
+        }), 500
+
