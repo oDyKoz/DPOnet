@@ -1,27 +1,33 @@
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Método não permitido" });
+const sendMessage = async () => {
+  if (!userMessage.trim()) {
+    setError("Digite uma mensagem antes de enviar.");
+    return;
   }
 
   try {
-    const { message } = req.body;
-
-    const response = await fetch("http://localhost:5000/send_message", {
+    const response = await fetch("/api/send_message", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ message })
+      body: JSON.stringify({ message: userMessage })
     });
 
     const data = await response.json();
 
-    if (!response.ok) {
-      return res.status(response.status).json({ error: data.response || "Erro ao enviar mensagem" });
+    if (data.status !== "success") {
+      throw new Error(data.response || "Erro ao enviar mensagem");
     }
 
-    return res.status(200).json(data);
+    setChatHistory(prev => [
+      ...prev,
+      { role: "user", content: userMessage },
+      { role: "bot", content: data.response }
+    ]);
+    setUserMessage("");
+    setError(null);
   } catch (error) {
-    return res.status(500).json({ error: "Erro interno: " + error.message });
+    console.error("Erro ao enviar mensagem:", error);
+    setError("Erro ao se comunicar com o servidor: " + error.message);
   }
-}
+};
