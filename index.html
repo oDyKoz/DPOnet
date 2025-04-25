@@ -145,7 +145,7 @@
                 setMessages(prev => [...prev, { text: userMessage, sender: 'user' }]);
 
                 try {
-                    const response = await fetch('http://localhost:5000/send_message', {
+                    const response = await fetch('/send_message', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
