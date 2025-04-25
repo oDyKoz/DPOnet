@@ -7,33 +7,7 @@ function MainLayout() {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [error, setError] = useState(null);
-  const [apiKey, setApiKey] = useState(null);
-
-  // Carrega a chave da API
-  useEffect(() => {
-    console.log('Iniciando carregamento da configuração...');
-    fetch('/api/config')
-      .then(response => {
-        console.log('Resposta recebida:', response.status);
-        if (!response.ok) {
-          throw new Error(`Erro ao carregar configuração: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(data => {
-        if (data.apiKey) {
-          setApiKey(data.apiKey);
-          setError(null);
-          console.log('Chave da API carregada com sucesso');
-        } else {
-          throw new Error('Chave da API não encontrada na resposta');
-        }
-      })
-      .catch(err => {
-        console.error('Erro ao carregar configuração:', err);
-        setError('Erro ao carregar configuração do chatbot');
-      });
-  }, []);
+  const [isLoading, setIsLoading] = useState(false);
 
   const toggleChat = () => {
     setIsOpen(!isOpen);
@@ -41,31 +15,21 @@ function MainLayout() {
 
   const sendMessage = async (e) => {
     e.preventDefault();
-    if (!inputMessage.trim() || !apiKey) {
-      if (!apiKey) {
-        setError('Chave da API não disponível');
-      }
-      return;
-    }
+    if (!inputMessage.trim()) return;
 
     const userMessage = inputMessage;
     setInputMessage('');
     setMessages(prev => [...prev, { text: userMessage, sender: 'user' }]);
+    setIsLoading(true);
+    setError(null);
 
     try {
-      const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent', {
+      const response = await fetch('http://localhost:5000/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-goog-api-key': apiKey
         },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: userMessage
-            }]
-          }]
-        })
+        body: JSON.stringify({ pergunta: userMessage })
       });
 
       if (!response.ok) {
@@ -74,18 +38,20 @@ function MainLayout() {
 
       const data = await response.json();
       
-      if (!data.candidates || !data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts || !data.candidates[0].content.parts[0]) {
-        throw new Error('Resposta inválida da API');
+      if (data.error) {
+        throw new Error(data.error);
       }
 
-      const botResponse = data.candidates[0].content.parts[0].text;
-      setMessages(prev => [...prev, { text: botResponse, sender: 'bot' }]);
+      setMessages(prev => [...prev, { text: data.resposta, sender: 'bot' }]);
     } catch (error) {
       console.error('Erro ao enviar mensagem:', error);
+      setError('Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, tente novamente.');
       setMessages(prev => [...prev, { 
         text: 'Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, tente novamente.', 
         sender: 'bot' 
       }]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -180,6 +146,15 @@ function MainLayout() {
                     {message.text}
                   </div>
                 ))}
+                {isLoading && (
+                  <div className="message bot-message loading">
+                    <div className="loading-dots">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <form onSubmit={sendMessage} className="chatbot-input">
@@ -188,9 +163,11 @@ function MainLayout() {
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   placeholder="Digite sua mensagem..."
-                  disabled={!apiKey}
+                  disabled={isLoading}
                 />
-                <button type="submit" disabled={!apiKey}>➤</button>
+                <button type="submit" disabled={isLoading || !inputMessage.trim()}>
+                  {isLoading ? '⌛' : '➤'}
+                </button>
               </form>
             </div>
           )}
