@@ -42,11 +42,8 @@ Se a pergunta for ofensiva ou inadequada, peça que o usuário mantenha o respei
 
 # Função para obter resposta do modelo Gemini
 def obter_resposta_como_gemini(pergunta):
-    # Construção do contexto completo com a pergunta
     contexto_completo = contexto + "\nUsuário: " + pergunta + "\nChatbot:"
-
     try:
-        # Gerar resposta usando o modelo Gemini
         resposta = modelo.generate_content(contexto_completo)
         return resposta.text
     except Exception as e:
@@ -54,7 +51,6 @@ def obter_resposta_como_gemini(pergunta):
 
 # Função para verificar macros
 def verificar_macros(pergunta):
-    # Dicionário de macros
     macros = {
         "contato": "Para entrar em contato conosco, envie um e-mail para contato@dpnet.com.br.",
         "comunicar": "Para entrar em contato conosco, envie um e-mail para contato@dpnet.com.br.",
@@ -71,93 +67,40 @@ def verificar_macros(pergunta):
         "endereço": "A DPOnet tem uma sede em Marília, São Paulo, localizada na Avenida das Esmeraldas 3865, Torre Tókyo, salas 103 e 104"
     }
 
-    # Verificar se a pergunta contém alguma palavra-chave para macro
     pergunta = pergunta.lower()
     for chave, resposta in macros.items():
         if chave in pergunta:
             return resposta
-
-    # Caso não tenha encontrado, retornar None
     return None
 
-# Função para obter resposta, considerando macros primeiro, depois o modelo Gemini
+# Função principal para resposta
 def obter_resposta(pergunta):
-    # Verificar se a pergunta se encaixa em alguma macro
     resposta_macro = verificar_macros(pergunta)
     if resposta_macro:
         return resposta_macro
-
-    # Se não for uma macro, utilizar o modelo Gemini
     return obter_resposta_como_gemini(pergunta)
 
-# Rota para obter a chave da API
-@app.route('/send_message', methods=['POST'])
+# rota renomeada para retornar a config (API key, etc.)
+@app.route('/config', methods=['POST'])
 def get_config():
     if not api_key:
-        print("ERRO: API Key não encontrada ao tentar retornar configuração")
-        return jsonify({
-            'status': 'error',
-            'message': 'API key não configurada no servidor'
-        }), 500
-    
-    print("Retornando configuração com sucesso")
-    return jsonify({
-        'status': 'success',
-        'apiKey': api_key,
-        'message': 'Configuração carregada com sucesso'
-    })
+        return jsonify({'status': 'error', 'message': 'API key não configurada no servidor'}), 500
+    return jsonify({'status': 'success', 'apiKey': api_key, 'message': 'Configuração carregada com sucesso'})
 
-# Rota para comunicação com o frontend
+# Rota para comunicação baseada em pergunta
 @app.route("/chat", methods=["POST"])
 def chat():
     dados = request.get_json()
     pergunta = dados.get("pergunta", "")
-
     if not pergunta:
         return jsonify({"resposta": "Erro: Nenhuma pergunta fornecida"}), 400
-
-    # Obter resposta baseada na pergunta
     resposta = obter_resposta(pergunta)
     return jsonify({"resposta": resposta})
 
-# Rota para enviar mensagens
+# ÚNICA ROTA /send_message para enviar mensagens ao Gemini
 @app.route("/send_message", methods=["POST"])
 def send_message():
     if not modelo:
-        return jsonify({
-            'status': 'error',
-            'response': 'Modelo não está inicializado corretamente'
-        }), 500
+        return jsonify({'status': 'error', 'response': 'Modelo não está inicializado corretamente'}), 500
 
     try:
-        data = request.get_json()
-        user_message = data.get("message", "")
-
-        if not user_message:
-            return jsonify({
-                'status': 'error',
-                'response': 'Mensagem vazia'
-            }), 400
-
-        print(f"Mensagem recebida: {user_message}")
-        
-        # Construção do contexto completo com a pergunta
-        contexto_completo = f"{contexto}\nUsuário: {user_message}\nChatbot:"
-        
-        # Gerar resposta usando o modelo Gemini
-        resposta = modelo.generate_content(contexto_completo)
-        print(f"Resposta gerada com sucesso: {resposta.text[:100]}...")
-        
-        return jsonify({
-            'status': 'success',
-            'response': resposta.text
-        })
-    except Exception as e:
-        print(f"ERRO ao processar mensagem: {str(e)}")
-        return jsonify({
-            'status': 'error',
-            'response': f'Erro ao processar mensagem: {str(e)}'
-        }), 500
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
