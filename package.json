@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Sistema DPO.net",
   "scripts": {
-    "start": "PORT=3001 react-scripts start"
+    "start": "PORT=5000 react-scripts start"
   },
   "dependencies": {
     "http-server": "^14.1.1"
