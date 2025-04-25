@@ -91,7 +91,7 @@ def obter_resposta(pergunta):
     return obter_resposta_como_gemini(pergunta)
 
 # Rota para obter a chave da API
-@app.route("/api/config")
+@app.route('/send_message', methods=['POST'])
 def get_config():
     if not api_key:
         print("ERRO: API Key não encontrada ao tentar retornar configuração")
