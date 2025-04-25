@@ -3,32 +3,47 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from functools import wraps
+import time
 
 # Carregar variáveis de ambiente
 load_dotenv()
 api_key = os.getenv("GOOGLE_API_KEY")
-print(f"API Key carregada: {api_key[:2]}...{api_key[-2:] if api_key else 'None'}")
 
 if not api_key:
-    print("ERRO: API Key não encontrada no arquivo .env")
-else:
-    try:
-        genai.configure(api_key=api_key)
-        print("Configuração do Gemini realizada com sucesso")
-    except Exception as e:
-        print(f"ERRO ao configurar Gemini: {str(e)}")
+    raise ValueError("API Key não encontrada no arquivo .env")
+
+# Configuração do Gemini
+try:
+    genai.configure(api_key=api_key)
+    modelo = genai.GenerativeModel("gemini-1.5-flash")
+except Exception as e:
+    raise ValueError(f"Erro ao configurar Gemini: {str(e)}")
 
 # Configuração do Flask
 app = Flask(__name__)
 CORS(app)
 
-# Modelo Gemini Pro
-try:
-    modelo = genai.GenerativeModel("gemini-1.5-flash")
-    print("Modelo Gemini carregado com sucesso")
-except Exception as e:
-    print(f"ERRO ao carregar modelo: {str(e)}")
-    modelo = None
+# Rate limiting
+def rate_limit(limit=10, per=60):
+    def decorator(f):
+        requests = {}
+        @wraps(f)
+        def wrapped(*args, **kwargs):
+            now = time.time()
+            ip = request.remote_addr
+            if ip in requests:
+                if now - requests[ip]['time'] < per:
+                    if requests[ip]['count'] >= limit:
+                        return jsonify({'error': 'Limite de requisições excedido'}), 429
+                    requests[ip]['count'] += 1
+                else:
+                    requests[ip] = {'time': now, 'count': 1}
+            else:
+                requests[ip] = {'time': now, 'count': 1}
+            return f(*args, **kwargs)
+        return wrapped
+    return decorator
 
 # Contexto inicial
 contexto = """
@@ -39,15 +54,6 @@ focando em temas como LGPD, proteção de dados, consultoria e assessoria juríd
 Se não souber a resposta, diga que só pode responder sobre a DPO.net.
 Se a pergunta for ofensiva ou inadequada, peça que o usuário mantenha o respeito.
 """
-
-# Função para obter resposta do modelo Gemini
-def obter_resposta_como_gemini(pergunta):
-    contexto_completo = contexto + "\nUsuário: " + pergunta + "\nChatbot:"
-    try:
-        resposta = modelo.generate_content(contexto_completo)
-        return resposta.text
-    except Exception as e:
-        return f"Erro ao comunicar com a API: {str(e)}"
 
 # Função para verificar macros
 def verificar_macros(pergunta):
@@ -73,71 +79,37 @@ def verificar_macros(pergunta):
             return resposta
     return None
 
-# Função principal para resposta
-def obter_resposta(pergunta):
-    resposta_macro = verificar_macros(pergunta)
-    if resposta_macro:
-        return resposta_macro
-    return obter_resposta_como_gemini(pergunta)
-
-# rota renomeada para retornar a config (API key, etc.)
-@app.route('/config', methods=['POST'])
-def get_config():
-    if not api_key:
-        return jsonify({'status': 'error', 'message': 'API key não configurada no servidor'}), 500
-    return jsonify({'status': 'success', 'apiKey': api_key, 'message': 'Configuração carregada com sucesso'})
-
-# Rota para comunicação baseada em pergunta
-@app.route("/chat", methods=["POST"])
-def chat():
-    dados = request.get_json()
-    pergunta = dados.get("pergunta", "")
-    if not pergunta:
-        return jsonify({"resposta": "Erro: Nenhuma pergunta fornecida"}), 400
-    resposta = obter_resposta(pergunta)
-    return jsonify({"resposta": resposta})
-
-# ÚNICA ROTA /send_message para enviar mensagens ao Gemini
-@app.route("/send_message", methods=["POST"])
-def send_message():
-    if not modelo:
-        return jsonify({
-            'status': 'error',
-            'response': 'Modelo não está inicializado corretamente'
-        }), 500
-
+# Função para obter resposta do modelo Gemini
+def obter_resposta_gemini(pergunta):
     try:
-        data = request.get_json()
-        print("Requisição recebida:", data)
-
-        if not data or "message" not in data:
-            return jsonify({
-                'status': 'error',
-                'response': 'Campo "message" ausente na requisição'
-            }), 400
-
-        user_message = data["message"].strip()
-        if not user_message:
-            return jsonify({
-                'status': 'error',
-                'response': 'Mensagem vazia'
-            }), 400
-
-        print(f"Mensagem recebida: {user_message}")
-
-        contexto_completo = f"{contexto}\nUsuário: {user_message}\nChatbot:"
+        contexto_completo = f"{contexto}\nUsuário: {pergunta}\nChatbot:"
         resposta = modelo.generate_content(contexto_completo)
-        print(f"Resposta gerada com sucesso: {resposta.text[:100]}...")
+        return resposta.text
+    except Exception as e:
+        return f"Erro ao processar sua pergunta: {str(e)}"
 
-        return jsonify({
-            'status': 'success',
-            'response': resposta.text
-        })
+# Rota para comunicação com o frontend
+@app.route("/chat", methods=["POST"])
+@rate_limit(limit=10, per=60)
+def chat():
+    try:
+        dados = request.get_json()
+        pergunta = dados.get("pergunta", "").strip()
+
+        if not pergunta:
+            return jsonify({"error": "Nenhuma pergunta fornecida"}), 400
+
+        # Verificar macros primeiro
+        resposta_macro = verificar_macros(pergunta)
+        if resposta_macro:
+            return jsonify({"resposta": resposta_macro})
+
+        # Se não for uma macro, usar o modelo Gemini
+        resposta = obter_resposta_gemini(pergunta)
+        return jsonify({"resposta": resposta})
 
     except Exception as e:
-        print(f"ERRO ao processar mensagem: {str(e)}")
-        return jsonify({
-            'status': 'error',
-            'response': f'Erro interno ao processar mensagem: {str(e)}'
-        }), 500
+        return jsonify({"error": f"Erro interno do servidor: {str(e)}"}), 500
 
+if __name__ == "__main__":
+    app.run(debug=False, host='0.0.0.0', port=5000)
