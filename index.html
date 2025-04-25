@@ -103,30 +103,31 @@
             const [error, setError] = useState(null);
             const [apiKey, setApiKey] = useState(null);
 
-            useEffect(() => {
-                console.log('Iniciando carregamento da configuração...');
-                fetch('./api/config')
-                    .then(response => {
-                        console.log('Resposta recebida:', response.status);
-                        if (!response.ok) {
-                            throw new Error(`Erro ao carregar configuração: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log('Dados recebidos:', data);
-                        if (data.status === 'success' && data.apiKey) {
-                            setApiKey(data.apiKey);
-                            setError(null);
-                            console.log('Chave da API carregada com sucesso');
-                        } else {
-                            throw new Error(data.message || 'Chave da API não encontrada na resposta');
-                        }
-                    })
-                    .catch(err => {
-                        console.error('Erro ao carregar configuração 123:', err);
-                        setError('Erro ao carregar configuração do chatbot: ' + err.message);
-                    });
+                useEffect(() => {
+            console.log('Iniciando carregamento da configuração...');
+            
+            fetch('/api/config')
+            .then(response => {
+                console.log('Resposta recebida:', response.status);
+                if (!response.ok) {
+                    throw new Error(`Erro ao carregar configuração: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Dados recebidos:', data);
+                if (data.status === 'success' && data.apiKey) {
+                    setApiKey(data.apiKey);
+                    setError(null);
+                    console.log('Chave da API carregada com sucesso');
+                } else {
+                    throw new Error(data.message || 'Chave da API não encontrada na resposta');
+                }
+            })
+            .catch(err => {
+                console.error('Erro ao carregar configuração:', err);
+                setError('Erro ao carregar configuração do chatbot: ' + err.message);
+            });
             }, []);
 
             const toggleChat = () => {
