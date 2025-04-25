@@ -99,7 +99,7 @@ def obter_resposta_gemini(pergunta):
         return f"Erro ao processar sua pergunta: {str(e)}"
 
 # Rota para comunicação com o frontend
-@app.route("/chat", methods=["POST"])
+@app.route("/api/chat", methods=["POST"])
 @rate_limit(limit=10, per=60)
 def chat():
     try:
@@ -131,7 +131,7 @@ def chat():
         return jsonify({"error": f"Erro interno do servidor: {str(e)}"}), 500
 
 # Rota de health check
-@app.route("/health", methods=["GET"])
+@app.route("/api/health", methods=["GET"])
 def health_check():
     return jsonify({"status": "ok"}), 200
 
