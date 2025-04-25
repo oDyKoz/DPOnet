@@ -24,7 +24,7 @@ function MainLayout() {
     setError(null);
 
     try {
-      const response = await fetch('https://dpo-net.vercel.app/chat', {
+      const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
