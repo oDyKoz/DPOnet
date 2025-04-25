@@ -11,7 +11,7 @@ function Chatbot() {
     // Carrega a chave da API de forma segura
     useEffect(() => {
         console.log('Iniciando carregamento da configuração...');
-        fetch('http://localhost:5000/api/config')
+        fetch('/api/config')
             .then(response => {
                 console.log('Resposta recebida:', response.status);
                 if (!response.ok) {
